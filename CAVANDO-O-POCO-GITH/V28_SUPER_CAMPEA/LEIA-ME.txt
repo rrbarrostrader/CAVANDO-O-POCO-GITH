@@ -1,0 +1,20 @@
+V28 Super Campeã — LANDING PAGE CRO
+================================
+
+Arquivo principal: index.html
+Preço oficial: R$ 27,90
+Checkout: https://pay.hotmart.com/O107401491G
+Suporte WhatsApp: (99) 98466-4131
+Suporte e-mail: suporte.rbtechdigital@gmail.com
+
+PIXEL META
+Procure por:
+const META_PIXEL_ID="COLE_SEU_PIXEL_ID_AQUI";
+e substitua pelo ID numérico real.
+
+IMPORTANTE
+- O evento Purchase NÃO é disparado nesta landing page.
+- Configure Purchase após pagamento confirmado na Hotmart/Meta.
+- O texto sobre Pix foi escrito de forma conservadora: acesso é liberado após confirmação do pagamento.
+- Não há escassez falsa, contagem falsa de compradores nem desconto inventado.
+- As páginas Termos, Privacidade e Suporte estão incluídas e linkadas no rodapé.
