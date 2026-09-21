@@ -5,23 +5,6 @@
 <meta name="p:domain_verify" content="62c1b61c5c31ed0f7a855bc9b722d9a5"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#10263a">
-<!-- Pinterest Tag - IAB FAPEGMA ID 2613828100260 -->
-<script>
-!function(e){if(!window.pintrk){window.pintrk = function () {
-window.pintrk.queue.push(Array.prototype.slice.call(arguments))};var
-  n=window.pintrk;n.queue=[],n.version="3.0";var
-  t=document.createElement("script");t.async=!0,t.src=e;var
-  r=document.getElementsByTagName("script")[0];
-  r.parentNode.insertBefore(t,r)}}("https://s.pinimg.com/ct/core.js");
-pintrk('load', '2613828100260');
-pintrk('page');
-</script>
-<noscript>
-<img height="1" width="1" style="display:none;" alt=""
-  src="https://ct.pinterest.com/v3/?event=init&tid=2613828100260&noscript=1" />
-</noscript>
-<!-- end Pinterest Tag -->
-
 <title>Cavando o Poço em Tempo de Crise | E-book em PDF</title>
 <meta name="description" content="E-book em PDF de Isabel Araújo Barros sobre fé, luto, silêncio espiritual e recomeço. 102 páginas, 13 capítulos, R$ 27,90, checkout Hotmart.">
 <meta property="og:type" content="product">
@@ -369,14 +352,7 @@ function setupPixel(){
  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
  fbq('init',META_PIXEL_ID);fbq('track','PageView');fbq('track','ViewContent',{content_name:'Cavando o Poço em Tempo de Crise',content_type:'product',value:PRODUCT_VALUE,currency:CURRENCY});
 }
-function track(name,params={},standard=false){
- try{
-   if(typeof fbq==='function') fbq(standard?'track':'trackCustom',name,params);
-   if(typeof pintrk==='function' && name==='InitiateCheckout'){
-     pintrk('track','checkout', {value: PRODUCT_VALUE, currency: CURRENCY, product_id: 'ebook-cavando-poco'});
-   }
- }catch(e){}
-}
+function track(name,params={},standard=false){try{if(typeof fbq==='function')fbq(standard?'track':'trackCustom',name,params)}catch(e){}}
 setupPixel();
 
 const incoming=new URLSearchParams(location.search);
@@ -386,7 +362,7 @@ document.querySelectorAll('.checkout').forEach(link=>{
  passthrough.forEach(k=>{const val=incoming.get(k);if(val&&!url.searchParams.has(k))url.searchParams.set(k,val)});
  if(!url.searchParams.has('sck'))url.searchParams.set('sck','lp_v28_'+(link.dataset.cta||'cta'));
  link.href=url.toString();
- link.addEventListener('click',()=>{track('InitiateCheckout',{content_name:'Cavando o Poço em Tempo de Crise',value:PRODUCT_VALUE,currency:CURRENCY,cta_position:link.dataset.cta||'unknown'},true); try{if(typeof pintrk==='function'){pintrk('track','checkout',{value:PRODUCT_VALUE,currency:CURRENCY,line_items:[{product_id:'ebook-cavando-poco',product_name:'Cavando o Poço em Tempo de Crise',product_price:PRODUCT_VALUE,product_quantity:1}]});}}catch(e){}});
+ link.addEventListener('click',()=>track('InitiateCheckout',{content_name:'Cavando o Poço em Tempo de Crise',value:PRODUCT_VALUE,currency:CURRENCY,cta_position:link.dataset.cta||'unknown'},true));
 });
 
 document.querySelectorAll('.faq button').forEach(btn=>btn.addEventListener('click',()=>{
