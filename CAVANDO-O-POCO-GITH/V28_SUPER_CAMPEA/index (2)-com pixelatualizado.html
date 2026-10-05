@@ -406,7 +406,7 @@ function track(name,params={},standard=false){
  try{
    if(typeof fbq==='function') fbq(standard?'track':'trackCustom',name,params);
    if(typeof pintrk==='function' && name==='InitiateCheckout'){
-     pintrk('track','checkout', {value: PRODUCT_VALUE, currency: CURRENCY, product_id: 'ebook-cavando-poco'});
+     pintrk('track','initiatecheckout');
    }
  }catch(e){}
 }
