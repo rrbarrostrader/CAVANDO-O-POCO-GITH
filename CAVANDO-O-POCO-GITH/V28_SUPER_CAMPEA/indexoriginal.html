@@ -298,16 +298,11 @@ function meta(type,name,params){try{if(typeof fbq==='function')fbq(type,name,par
 /* ===== Atribuição: repassa parâmetros recebidos; nunca sobrescreve sck ===== */
 const incoming=new URLSearchParams(location.search);
 const pass=['utm_source','utm_medium','utm_campaign','utm_term','utm_content','fbclid','gclid','src','sck'];
-const oppref=incoming.get('oppref');
 let lastClick=0;
 document.querySelectorAll('.checkout').forEach(a=>{
  const u=new URL(CHECKOUT_URL),cta=a.dataset.cta||'cta';
  pass.forEach(k=>{const v=incoming.get(k);if(v)u.searchParams.set(k,v)});
  if(!u.searchParams.has('sck'))u.searchParams.set('sck','lp_claudio2_'+cta);
-  if(oppref){
-   const currentSck=u.searchParams.get('sck')||('lp_claudio2_'+cta);
-   if(!currentSck.includes('|oppref:'))u.searchParams.set('sck',currentSck+'|oppref:'+oppref);
-  }
  a.href=u.toString();
  /* Meta InitiateCheckout: somente em clique real no CTA (trava anti-duplicidade) */
  a.addEventListener('click',()=>{
