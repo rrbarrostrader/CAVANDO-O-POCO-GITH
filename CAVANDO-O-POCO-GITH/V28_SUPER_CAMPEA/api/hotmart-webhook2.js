@@ -20,7 +20,6 @@ function getEventName(body) {
 
 function isApprovedPurchase(body) {
   const eventName = getEventName(body);
-
   if (eventName === "PURCHASE_APPROVED") return true;
 
   const status = String(
@@ -43,30 +42,42 @@ function getTransactionId(body) {
   ).trim();
 }
 
+// OpenAI requires timestamp_ms to be within the last 7 days.
+// Hotmart's sandbox/test payload can contain intentionally old purchase dates
+// (the sample currently sends approved_date/order_date from 2017).
+// Prefer the webhook creation_date, which represents when Hotmart generated
+// this notification. If that value is also invalid/old, use current server time.
 function getTimestampMs(body) {
-  const candidates = [
-    body?.data?.purchase?.approved_date,
-    body?.data?.purchase?.approvedDate,
-    body?.purchase?.approved_date,
-    body?.purchase?.approvedDate,
-    body?.creation_date,
-    body?.creationDate,
-    body?.data?.purchase?.order_date,
-    body?.data?.purchase?.orderDate
-  ];
+  const now = Date.now();
+  const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
 
-  for (const value of candidates) {
-    if (value === undefined || value === null || value === "") continue;
+  const creation = body?.creation_date ?? body?.creationDate;
 
-    if (typeof value === "number") {
-      return value < 1e12 ? value * 1000 : value;
+  if (creation !== undefined && creation !== null && creation !== "") {
+    let ts;
+
+    if (typeof creation === "number") {
+      ts = creation < 1e12 ? creation * 1000 : creation;
+    } else {
+      const numeric = Number(creation);
+      if (Number.isFinite(numeric)) {
+        ts = numeric < 1e12 ? numeric * 1000 : numeric;
+      } else {
+        const parsed = Date.parse(creation);
+        if (!Number.isNaN(parsed)) ts = parsed;
+      }
     }
 
-    const parsed = Date.parse(value);
-    if (!Number.isNaN(parsed)) return parsed;
+    if (
+      Number.isFinite(ts) &&
+      ts <= now + 5 * 60 * 1000 &&
+      ts >= now - sevenDaysMs
+    ) {
+      return Math.trunc(ts);
+    }
   }
 
-  return Date.now();
+  return now;
 }
 
 function getSourceUrl(body) {
@@ -112,7 +123,6 @@ module.exports = async function handler(req, res) {
   const transactionId = getTransactionId(body);
 
   if (!transactionId) {
-    console.error("Approved Hotmart purchase received without transaction ID.");
     return res.status(400).json({
       ok: false,
       error: "missing_transaction_id"
@@ -156,9 +166,6 @@ module.exports = async function handler(req, res) {
         responseText
       );
 
-      // TEMPORARY DIAGNOSTIC:
-      // Exposes OpenAI's validation response to the Hotmart test history.
-      // It never exposes OPENAI_CONVERSION_API_KEY.
       return res.status(502).json({
         ok: false,
         error: "openai_conversion_api_error",
