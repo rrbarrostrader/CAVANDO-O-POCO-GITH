@@ -80,6 +80,24 @@ function getTimestampMs(body) {
   return now;
 }
 
+
+function getOppref(body) {
+  const sck = String(
+    body?.data?.purchase?.origin?.sck ||
+    body?.purchase?.origin?.sck ||
+    body?.data?.purchase?.sck ||
+    body?.purchase?.sck ||
+    ""
+  );
+
+  const marker = "|oppref:";
+  const index = sck.indexOf(marker);
+  if (index === -1) return "";
+
+  // oppref is opaque: return the exact value stored after our marker.
+  return sck.slice(index + marker.length).trim();
+}
+
 function getSourceUrl(body) {
   const url =
     body?.data?.purchase?.checkout_url ||
@@ -130,21 +148,25 @@ module.exports = async function handler(req, res) {
   }
 
   const eventId = `hotmart_${transactionId}`;
+  const oppref = getOppref(body);
+
+  const event = {
+    id: eventId,
+    type: "order_created",
+    timestamp_ms: getTimestampMs(body),
+    source_url: getSourceUrl(body),
+    action_source: "web",
+    data: {
+      type: "contents"
+    }
+  };
+
+  // OpenAI requires the original oppref value unchanged when available.
+  if (oppref) event.oppref = oppref;
 
   const payload = {
     validate_only: false,
-    events: [
-      {
-        id: eventId,
-        type: "order_created",
-        timestamp_ms: getTimestampMs(body),
-        source_url: getSourceUrl(body),
-        action_source: "web",
-        data: {
-          type: "contents"
-        }
-      }
-    ]
+    events: [event]
   };
 
   try {
